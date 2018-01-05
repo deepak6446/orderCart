@@ -27,15 +27,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('*', function (req, res) {
+    console.log("*****")
+    res.sendFile(__dirname + '/public/index.html');
+});
+
 app.use('/', routes);
 // app.use('/users', users);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -46,6 +45,18 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+app.set('port', process.env.PORT || 3000);
+var server = app.listen(app.get('port'), function () {
+    console.log('Express server listening on port ' + server.address().port,encrypt('asd'));
 });
 
 process.on('uncaughtException', function(e) {
