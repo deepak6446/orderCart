@@ -190,5 +190,80 @@
         $scope.logout = function () {
             UserAuthFactory.logout();
         }
+
+        $scope.getProducts = function() {
+            mainFact.postProcess('/api/getProducts').then(function (data) {
+                console.log('out login', data)
+                $scope.product = data.data
+            })
+        }
+
+        $scope.addToCart = function(index) {
+            $scope.showModal = true
+            $scope.p = $scope.product[index]
+            $scope.selected = ''
+            if($scope.p.select) {
+                $scope.selectOp = $scope.p.select[Object.keys($scope.p.select)[0]]
+                $scope.param = Object.keys($scope.p.select)[0]
+            }
+            $scope.ind = index
+            console.log(123444,$scope.selectOp, Object.keys($scope.p.select)[0]) 
+        }
+        $scope.cartProduct = []
+        $rootScope.showCart = false
+        $scope.finalToCart = function(index) {
+            // if(!selected) return alert('please select required filed\'s')
+            var count = 0
+            
+            $scope.product[index].count--
+            if ($scope.cartProduct.length) {
+                $scope.cartProduct.forEach(function(d, i) {
+                    if (d._id == $scope.product[index]._id) {
+                        $scope.cartProduct[i].count++
+                        count = $scope.cartProduct[i].count++
+                    }
+                })
+            }
+            if (!count) {
+                count = 1
+                $scope.cartProduct[$scope.cartProduct.length] = angular.copy($scope.product[index])
+                $scope.cartProduct[$scope.cartProduct.length-1].count = count
+            }
+            console.log($scope.cartProduct)
+            $scope.showModal = false
+        }
+
+        $scope.loadCart = function() {
+            $rootScope.showCart = true
+        $rootScope.showOrders = false
+
+            console.log("load acrt")
+
+        }
+        $scope.loadHome = function(){
+            $rootScope.showCart = false
+        $rootScope.showOrders = false
+
+        }
+
+        $scope.placeOrder = function() {
+            if(!$scope.cartProduct.length) return alert('Nothing to order')
+            mainFact.postProcess('/api/placeOrder', $scope.cartProduct).then(function (data) {
+                if(data.status) alert('order placed successfully')
+                $scope.cartProduct = []
+
+            })
+        }
+        $rootScope.showOrders = false
+        $scope.loadOrders = function(){
+            mainFact.postProcess('/api/loadOrders').then(function (data) {
+                if(data.status) {
+                    $rootScope.orderProduct = data.data
+                    $rootScope.showOrders = true   
+                }else alert($scope.message)
+                console.log($rootScope.orderProduct)
+            }) 
+        }
+
     }])  
 })();

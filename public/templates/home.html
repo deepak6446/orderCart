@@ -1,22 +1,85 @@
-<div class="container">
-	<div class="row">
- 	    <div class="card col-md-3">
- 	      <img class="card-img-top" src="images/Lamara_Men's_Canvas_Casual_Shoes_Sneaker.jpg" alt="Card image cap">
+<div class="container" ng-init="getProducts()" ng-show="!showCart && !showOrders">
+	<div class="row" ng-show = "showModal" style="top: 0px"><!-- ng-show = "showModal" -->
+ 	    <div class="card col-md-offset-3 col-md-3 popUp" >
  	      <div class="card-body">
- 	        <h4 class="card-title">Card title</h4>
- 	        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
- 	        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
- 	        <a  class="btn btn-primary">Go somewhere</a>
+ 	    	<span class="fa fa-remove pull-right" ng-click = "showModal = false"></span>
+ 	        <h4 class="card-title">{{p.name}}</h4>
+ 	        <p class="card-text">{{p.description}}</p>
+ 	        <p class="card-text"><small class="text-muted">{{p.count}} in stock</small></p>
+ 	        <p style="color: red"><span class="fa fa-usd"></span>{{p.price}}</p>
+ 	        <p ng-if="p.select">Select {{param}}<br>
+ 	        	<select ng-model="selected"><option ng-repeat="(key, val) in selectOp">{{key}}</option></select>
+ 	        </p>
+ 	        <button class="btn btn-primary" ng-click="finalToCart(ind); showModal = false" ng-disable="p.count<=0"><span class="fa fa-shopping-cart"></span> Add to Cart</button>
  	      </div>
  	    </div>
- 	    <div class="card col-md-3 col-md-offset-1">
- 	      <img class="card-img-top" src="images/Lamara_Men's_Canvas_Casual_Shoes_Sneaker.jpg" alt="Card image cap">
+	</div>
+	<div class="row">
+ 	    <div class="card cardborder col-md-3" ng-repeat = "d in product track by $index">
+ 	      <img class="card-img-top" ng-src="{{d.imageUrl}}" alt="image not found">
  	      <div class="card-body">
- 	        <h4 class="card-title">Card title</h4>
- 	        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
- 	        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
- 	        <a  class="btn btn-primary">Go somewhere</a>
+ 	        <h4 class="card-title">{{d.name}}</h4>
+ 	        <p class="card-text">{{d.description}}</p>
+ 	        <p class="card-text"><small class="text-muted">{{d.count}} in stock</small></p>
+ 	        <p style="color: red"><span class="fa fa-usd"></span>{{d.price}}</p>
+ 	        <a  class="btn btn-primary" ng-click="addToCart($index)" ng-disable ="d.count<=0"><span class="fa fa-shopping-cart"></span> Add to Cart</a>
  	      </div>
  	    </div>
 	</div>
 </div>
+<div class="container" ng-show="showCart && !showOrders">
+	<div class="row" ng-show='cartProduct.length'>
+ 	    <div class="" ng-repeat = "d in cartProduct track by $index">
+ 	      <div class="col-md-12">
+	 	      <div style="float: left;">
+	 	      <img ng-src="{{d.imageUrl}}" style="width: 44%" alt="image not found">
+	 	      	
+	 	      </div>
+	 	      <div style="float: right;">
+	 	        <h4 class="">{{d.name}}</h4>
+	 	        <p class="">{{d.description}}</p>
+	 	        <p class=""><small class="text-muted">{{d.count}} in stock</small></p>
+	 	        <p style="color: red"><span class="fa fa-usd"></span>{{d.price}}</p>
+	 	      	
+	 	      </div>
+ 	      </div>
+ 	      <a  class="btn btn-primary pull-right" ng-click="placeOrder()" ng-disable ="d.count<=0"><span class="fa fa-shopping-cart"></span> Order</a>
+ 	    </div>
+	</div>
+	<div class="row" ng-show='!cartProduct.length'>
+		<span> no products in cart</span>
+	</div>
+</div>
+<div class="container" ng-show="!showCart && showOrders">
+	<div class="row">
+ 	    <div class="" ng-repeat = "d in orderProduct track by $index">
+ 	      <div class="col-md-12">
+	 	      <div style="float: left;">
+	 	      <img ng-src="{{d.imageUrl}}" style="width: 44%" alt="image not found">
+	 	      	
+	 	      </div>
+	 	      <div style="float: right;">
+	 	        <h4 class="">{{d.name}}</h4>
+	 	        <p class="">{{d.description}}</p>
+	 	        <p class=""><small class="text-muted">quantity : {{d.count}}</small></p>
+	 	        <p style="color: red"><span class="fa fa-usd"></span>{{d.price}}</p>
+	 	      	
+	 	      </div>
+ 	      </div>
+ 	    </div>
+	</div>
+	<div class="row" ng-show='!orderProduct.length'>
+		<span> no products ordered</span>
+	</div>
+</div>
+
+<style type="text/css">
+	.cardborder { 
+	    border: 0px solid rgba(0,0,0,.125);
+	}
+
+	.popUp {
+		z-index: 1000;
+		position: absolute;
+	}
+</style>

@@ -1,4 +1,6 @@
 const User 			= require('../models/users.js')
+const Product 		= require('../models/product.js')
+const Order  		= require('../models/order.js')
 const setting 		= require('../config/setting')
 const Q 			= require('q')
 const crypto 		= require('crypto');
@@ -8,6 +10,46 @@ const algorithm 	= setting.algorithm,
 	  client		= setting.client 
 
 module.exports 	= {
+
+	getProducts : (req, res) => {
+		Product.find({}, (err, data) => {
+			console.log("product", err, data)
+			json = {}
+			if(err||!data.length) json = { status:false, message: "Error Getting Product's"}
+			else json = { status:true, data: data}
+
+			res.send(json)
+			res.end()
+		})
+	},
+
+	loadOrders : (req, res) => {
+		Order.find({username: req.session.username}, (err, data) => {
+			// console.log("product", err, data)
+			json = {}
+			if(err||!data.length) json = { status:false, message: "No products ordered"}
+			else json = { status:true, data: data}
+
+			res.send(json)
+			res.end()
+		})
+	},
+
+	placeOrder : (req, res) => {
+		console.log("placeOrder", req.body)
+		req.body.forEach(function(d) {
+			Product.update({_id:d._id}, {$inc:{count:-d.count}}, function(e, d) {
+				console.log('in svae product', e, d)
+			})
+			delete d['_id']
+			console.log('-------', d)
+			order = new Order(d)
+			order.username = req.session.username
+			order.save(function(er, da) {console.log("inn save", er, da)})
+		})
+		res.send({status:true})
+		res.end()
+	},
 
 	login: async (req, res) => {
 	    

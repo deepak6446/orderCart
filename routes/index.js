@@ -9,6 +9,9 @@ router.get('/', function(req, res, next) {
 
 router.post('/loginAuth', processRequest.login);
 router.post('/logout', processRequest.logout);
+router.post('/api/getProducts', processRequest.getProducts);
+router.post('/api/placeOrder', processRequest.placeOrder);
+router.post('/api/loadOrders', processRequest.loadOrders);
 router.post('/user/session', processRequest.session);
 
 module.exports = router;
