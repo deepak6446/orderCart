@@ -54,6 +54,7 @@ module.exports 	= {
 	login: async (req, res) => {
 	    
 	    console.log("<<<<<<<<<<<<< in login : ", req.body)
+		console.log('--------___>', encrypt('user1'), encrypt('user2'),encrypt('user3'))
 
 	    var username = req.body.username || '';
 	    var password = req.body.password || '';
@@ -68,8 +69,6 @@ module.exports 	= {
 	    
 	    var dbUserObj = await module.exports.validate(username, password)
 	    
-        console.log("in auth.validate", dbUserObj)
-
         if (!dbUserObj) { // If authentication fails, we send a 401 back
             
             res.json({
@@ -114,22 +113,18 @@ module.exports 	= {
 	},
 
 	validate: (username, password) => {
-	    console.log("in validate")
 	    var deferred = Q.defer();
-	    console.log("2 in validate", username)
 
 	    try{
-	    console.log("3 in validate", username)
 
 	        User.findOne({username: username}, (err, doc) => {
 	        	console.log(err, doc)
-	    console.log("4 in validate", username)
 
 	            if (err) reject(err);
 	            else {
 	                if (!doc)
 	                    return deferred.resolve(false);
-	                console.log("----------->", doc, decrypt(doc.password), password)
+	                // console.log("----------->", doc, decrypt(doc.password), password)
 	                if (decrypt(doc.password) !== password)
 	                    deferred.resolve(false);
 	                else {
@@ -170,6 +165,7 @@ validateEmail = (email) => {
     
     return re.test(email);
 }
+
 
 encrypt = (text) => {
 	if (!text||!text.length) return '';

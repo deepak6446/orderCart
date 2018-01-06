@@ -157,7 +157,7 @@
 
             if (username !== undefined && password !== undefined) {
                 mainFact.postProcess('/loginAuth', $scope.user).then(function (data) {
-                    console.log('out login', data)
+                    // console.log('out login', data)
                     $scope.user = {
                         username: '',
                         password: ''
@@ -193,7 +193,7 @@
 
         $scope.getProducts = function() {
             mainFact.postProcess('/api/getProducts').then(function (data) {
-                console.log('out login', data)
+                // console.log('out login', data)
                 $scope.product = data.data
             })
         }
@@ -207,12 +207,14 @@
                 $scope.param = Object.keys($scope.p.select)[0]
             }
             $scope.ind = index
-            console.log(123444,$scope.selectOp, Object.keys($scope.p.select)[0]) 
+            // console.log(123444,$scope.selectOp, Object.keys($scope.p.select)[0]) 
         }
         $scope.cartProduct = []
         $rootScope.showCart = false
-        $scope.finalToCart = function(index) {
-            // if(!selected) return alert('please select required filed\'s')
+        $scope.selected = ''
+        $scope.finalToCart = function(index, selected) {
+            if(!selected) return alert('please select required field\'s')
+            $scope.showModal = false
             var count = 0
             
             $scope.product[index].count--
@@ -229,25 +231,26 @@
                 $scope.cartProduct[$scope.cartProduct.length] = angular.copy($scope.product[index])
                 $scope.cartProduct[$scope.cartProduct.length-1].count = count
             }
-            console.log($scope.cartProduct)
+            // console.log($scope.cartProduct)
             $scope.showModal = false
         }
 
         $scope.loadCart = function() {
             $rootScope.showCart = true
-        $rootScope.showOrders = false
-
-            console.log("load acrt")
-
+            $rootScope.showOrders = false
         }
+
         $scope.loadHome = function(){
             $rootScope.showCart = false
         $rootScope.showOrders = false
 
         }
 
-        $scope.placeOrder = function() {
+        $scope.placeOrder = function(user) {
             if(!$scope.cartProduct.length) return alert('Nothing to order')
+            $scope.cartProduct.forEach(function(d, i){
+                $scope.cartProduct[i].userDetail = user 
+            })
             mainFact.postProcess('/api/placeOrder', $scope.cartProduct).then(function (data) {
                 if(data.status) alert('order placed successfully')
                 $scope.cartProduct = []
@@ -257,11 +260,13 @@
         $rootScope.showOrders = false
         $scope.loadOrders = function(){
             mainFact.postProcess('/api/loadOrders').then(function (data) {
+                // console.log(data)
                 if(data.status) {
                     $rootScope.orderProduct = data.data
-                    $rootScope.showOrders = true   
-                }else alert($scope.message)
-                console.log($rootScope.orderProduct)
+                    $rootScope.showOrders = true 
+                    $rootScope.showCart = false
+                }else alert(data.message)
+                // console.log($rootScope.orderProduct)
             }) 
         }
 

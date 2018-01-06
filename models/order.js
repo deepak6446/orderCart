@@ -8,6 +8,7 @@ var orderSchema =  new Mongoose.Schema ({
     category : {type: String},
     imageUrl : {type: String},
     select : {type: Object, default: {}},
+    userDetail : {type: Object, default: {}},
     count : {type: Number, default: 0},
     username : {type:String}
 });
